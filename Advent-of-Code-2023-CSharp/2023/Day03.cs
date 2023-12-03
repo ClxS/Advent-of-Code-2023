@@ -22,9 +22,8 @@ public class Day03 : AdventBase
     
     protected override void InternalOnLoad()
     {
-        //Thread.Sleep(TimeSpan.FromMilliseconds(1));
-        this.inputP1 = Input.Text.ToArray();
-        this.inputP2 = Input.Text.ToArray();
+        this.inputP1 = Input.Text.ToCharArray();
+        this.inputP2 = Input.Text.ToCharArray();
     }
     
     protected override object InternalPart1()
@@ -36,7 +35,7 @@ public class Day03 : AdventBase
         {
             for (var x = 0; x < Input.Lines[y].Length; x++)
             {
-                if (char.IsDigit(mutableMap[y,x]) || mutableMap[y,x] == '.' || mutableMap[y,x] == ' ')
+                if (char.IsDigit(mutableMap[y,x]) || mutableMap[y,x] == '.')
                 {
                     continue;
                 }
@@ -72,7 +71,7 @@ public class Day03 : AdventBase
         {
             for (var x = 0; x < Input.Lines[y].Length; x++)
             {
-                if (char.IsDigit(mutableMap[y,x]) || mutableMap[y,x] == '.' || mutableMap[y,x] == ' ')
+                if (mutableMap[y,x] != '*')
                 {
                     continue;
                 }
@@ -120,11 +119,11 @@ public class Day03 : AdventBase
             xEnd++;
         }
         
-        var number = mutableMap.Slice(y, xStart, 1, xEnd - xStart + 1).GetRowSpan(0);
+        Span<char> number = mutableMap.GetRowSpan(y).Slice(xStart, xEnd - xStart + 1);
         output = ulong.Parse(number);
         for (int i = xStart; i <= xEnd; i++)
         {
-            mutableMap[y,i] = ' ';
+            mutableMap[y,i] = '.';
         }
     }
     
