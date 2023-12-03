@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>Advent_of_Code_2023_CSharp</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+      <UserSecretsId>a55bbefd-661c-4838-afb6-d9bbc75f6d67</UserSecretsId>
+  </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AdventOfCodeSupport" Version="2.3.1" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <Folder Include="2023\Inputs\" />
+    </ItemGroup>
+
+</Project>
