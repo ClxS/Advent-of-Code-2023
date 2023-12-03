@@ -7,13 +7,10 @@ AdventSolutions solutions = new();
 AdventBase day = solutions.GetDay(2023, 3);
 await day.DownloadInputAsync();
 
+#if DEBUG
 day.Part1();
-//await day.SubmitPart1Async();
-
 day.Part2();
-//await day.SubmitPart1Async();
-
-
-#if !DEBUG
-day.Benchmark();
+#else
+if (await day.CheckPart1Async() == true && await day.CheckPart2Async() == true)
+    day.Benchmark();
 #endif

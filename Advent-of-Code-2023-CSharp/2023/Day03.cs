@@ -1,4 +1,5 @@
 ﻿using AdventOfCodeSupport;
+using CommunityToolkit.HighPerformance;
 
 namespace Advent_of_Code_2023_CSharp._2023;
 
@@ -15,16 +16,27 @@ public class Day03 : AdventBase
         new Vector2(-1, 1),
         new Vector2(1, -1),
     };
+
+    private char[] inputP1; 
+    private char[] inputP2; 
+    
+    protected override void InternalOnLoad()
+    {
+        //Thread.Sleep(TimeSpan.FromMilliseconds(1));
+        this.inputP1 = Input.Text.ToArray();
+        this.inputP2 = Input.Text.ToArray();
+    }
     
     protected override object InternalPart1()
     {
         ulong sum = 0;
-        char[][] mutableMap = Input.Lines.Select(line => line.ToCharArray()).ToArray();
+        int stride = Array.IndexOf(this.inputP1, '\n');
+        var mutableMap = new Span2D<char>(this.inputP1, 0, this.inputP1.Length / (stride + 1), stride, 1);
         for (var y = 0; y < Input.Lines.Length; y++)
         {
             for (var x = 0; x < Input.Lines[y].Length; x++)
             {
-                if (char.IsDigit(mutableMap[y][x]) || mutableMap[y][x] == '.' || mutableMap[y][x] == ' ')
+                if (char.IsDigit(mutableMap[y,x]) || mutableMap[y,x] == '.' || mutableMap[y,x] == ' ')
                 {
                     continue;
                 }
@@ -36,11 +48,13 @@ public class Day03 : AdventBase
                     if (x + direction.X < 0 || x + direction.X >= Input.Lines[y].Length)
                         continue;
 
-                    if (char.IsDigit(mutableMap[y + direction.Y][x + direction.X]))
+                    if (!char.IsDigit(mutableMap[y + direction.Y, x + direction.X]))
                     {
-                        SweepAndReplace(mutableMap, x + direction.X, y + direction.Y, out ulong number);
-                        sum += number;
+                        continue;
                     }
+
+                    this.SweepAndReplace(mutableMap, x + direction.X, y + direction.Y, out ulong number);
+                    sum += number;
                 }
             }
         }
@@ -51,17 +65,20 @@ public class Day03 : AdventBase
     protected override object InternalPart2()
     {
         ulong sum = 0;
-        char[][] mutableMap = Input.Lines.Select(line => line.ToCharArray()).ToArray();
+
+        int stride = Array.IndexOf(this.inputP2, '\n');
+        var mutableMap = new Span2D<char>(this.inputP2, 0, this.inputP2.Length / (stride + 1), stride, 1);
         for (var y = 0; y < Input.Lines.Length; y++)
         {
             for (var x = 0; x < Input.Lines[y].Length; x++)
             {
-                if (char.IsDigit(mutableMap[y][x]) || mutableMap[y][x] == '.' || mutableMap[y][x] == ' ')
+                if (char.IsDigit(mutableMap[y,x]) || mutableMap[y,x] == '.' || mutableMap[y,x] == ' ')
                 {
                     continue;
                 }
 
-                List<ulong> adjacentNumbers = new();
+                var adjacentCount = 0;
+                ulong sumOfAdjacent = 1;
                 foreach (Vector2 direction in adjacent)
                 {
                     if (y + direction.Y < 0 || y + direction.Y >= Input.Lines.Length)
@@ -69,16 +86,19 @@ public class Day03 : AdventBase
                     if (x + direction.X < 0 || x + direction.X >= Input.Lines[y].Length)
                         continue;
 
-                    if (char.IsDigit(mutableMap[y + direction.Y][x + direction.X]))
+                    if (!char.IsDigit(mutableMap[y + direction.Y, x + direction.X]))
                     {
-                        SweepAndReplace(mutableMap, x + direction.X, y + direction.Y, out ulong number);
-                        adjacentNumbers.Add(number);
+                        continue;
                     }
+
+                    this.SweepAndReplace(mutableMap, x + direction.X, y + direction.Y, out ulong number);
+                    adjacentCount++;
+                    sumOfAdjacent *= number;
                 }
 
-                if (adjacentNumbers.Count == 2)
+                if (adjacentCount == 2)
                 {
-                    sum += adjacentNumbers[0] * adjacentNumbers[1];
+                    sum += sumOfAdjacent;
                 }
             }
         }
@@ -86,25 +106,25 @@ public class Day03 : AdventBase
         return sum;
     }
 
-    private void SweepAndReplace(char[][] mutableMap, int x, int y, out ulong output)
+    private void SweepAndReplace(Span2D<char> mutableMap, int x, int y, out ulong output)
     {
-        var xStart = x;
-        while (xStart > 0 && char.IsDigit(mutableMap[y][xStart - 1]))
+        int xStart = x;
+        while (xStart > 0 && char.IsDigit(mutableMap[y,xStart - 1]))
         {
             xStart--;
         }
         
-        var xEnd = x;
-        while (xEnd < mutableMap[y].Length - 1 && char.IsDigit(mutableMap[y][xEnd + 1]))
+        int xEnd = x;
+        while (xEnd < mutableMap.Width - 1 && char.IsDigit(mutableMap[y,xEnd + 1]))
         {
             xEnd++;
         }
         
-        char[] number = mutableMap[y][xStart..(xEnd + 1)];
+        var number = mutableMap.Slice(y, xStart, 1, xEnd - xStart + 1).GetRowSpan(0);
         output = ulong.Parse(number);
         for (int i = xStart; i <= xEnd; i++)
         {
-            mutableMap[y][i] = ' ';
+            mutableMap[y,i] = ' ';
         }
     }
     
