@@ -31,9 +31,9 @@ public class Day03 : AdventBase
         ulong sum = 0;
         int stride = Array.IndexOf(this.inputP1, '\n');
         var mutableMap = new Span2D<char>(this.inputP1, 0, this.inputP1.Length / (stride + 1), stride, 1);
-        for (var y = 0; y < Input.Lines.Length; y++)
+        for (var y = 0; y < mutableMap.Height; y++)
         {
-            for (var x = 0; x < Input.Lines[y].Length; x++)
+            for (var x = 0; x < mutableMap.Width; x++)
             {
                 if (char.IsDigit(mutableMap[y,x]) || mutableMap[y,x] == '.')
                 {
@@ -42,9 +42,9 @@ public class Day03 : AdventBase
 
                 foreach (Vector2 direction in adjacent)
                 {
-                    if (y + direction.Y < 0 || y + direction.Y >= Input.Lines.Length)
+                    if (y + direction.Y < 0 || y + direction.Y >= mutableMap.Height)
                         continue;
-                    if (x + direction.X < 0 || x + direction.X >= Input.Lines[y].Length)
+                    if (x + direction.X < 0 || x + direction.X >= mutableMap.Width)
                         continue;
 
                     if (!char.IsDigit(mutableMap[y + direction.Y, x + direction.X]))
@@ -67,9 +67,9 @@ public class Day03 : AdventBase
 
         int stride = Array.IndexOf(this.inputP2, '\n');
         var mutableMap = new Span2D<char>(this.inputP2, 0, this.inputP2.Length / (stride + 1), stride, 1);
-        for (var y = 0; y < Input.Lines.Length; y++)
+        for (var y = 0; y < mutableMap.Height; y++)
         {
-            for (var x = 0; x < Input.Lines[y].Length; x++)
+            for (var x = 0; x < mutableMap.Width; x++)
             {
                 if (mutableMap[y,x] != '*')
                 {
@@ -80,9 +80,9 @@ public class Day03 : AdventBase
                 ulong sumOfAdjacent = 1;
                 foreach (Vector2 direction in adjacent)
                 {
-                    if (y + direction.Y < 0 || y + direction.Y >= Input.Lines.Length)
+                    if (y + direction.Y < 0 || y + direction.Y >= mutableMap.Height)
                         continue;
-                    if (x + direction.X < 0 || x + direction.X >= Input.Lines[y].Length)
+                    if (x + direction.X < 0 || x + direction.X >= mutableMap.Width)
                         continue;
 
                     if (!char.IsDigit(mutableMap[y + direction.Y, x + direction.X]))
