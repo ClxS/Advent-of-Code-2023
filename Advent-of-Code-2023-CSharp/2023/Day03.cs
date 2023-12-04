@@ -1,4 +1,5 @@
-﻿using AdventOfCodeSupport;
+﻿using System.Buffers;
+using AdventOfCodeSupport;
 using CommunityToolkit.HighPerformance;
 
 namespace Advent_of_Code_2023_CSharp._2023;
@@ -19,6 +20,7 @@ public class Day03 : AdventBase
 
     private char[] inputP1; 
     private char[] inputP2; 
+    private static readonly SearchValues<char> Symbols = SearchValues.Create("0123456789.");
     
     protected override void InternalOnLoad()
     {
@@ -69,8 +71,19 @@ public class Day03 : AdventBase
         var mutableMap = new Span2D<char>(this.inputP2, 0, this.inputP2.Length / (stride + 1), stride, 1);
         for (var y = 0; y < mutableMap.Height; y++)
         {
-            for (var x = 0; x < mutableMap.Width; x++)
+            Span<char> line = mutableMap.GetRowSpan(y);
+            
+            var x = 0;
+            for (; x < mutableMap.Width; x++)
             {
+                int advance = line[x..].IndexOfAnyExcept(Symbols);
+                if (advance == -1)
+                {
+                    break;
+                }
+
+                x += advance;
+                
                 if (mutableMap[y,x] != '*')
                 {
                     continue;

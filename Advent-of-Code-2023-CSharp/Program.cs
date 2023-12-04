@@ -4,7 +4,8 @@ using AdventOfCodeSupport;
 using BenchmarkDotNet.Configs;
 
 AdventSolutions solutions = new();
-AdventBase day = solutions.GetDay(2023, 3);
+AdventBase day = solutions.GetDay(2023, 4);
+
 await day.DownloadInputAsync();
 
 #if DEBUG
