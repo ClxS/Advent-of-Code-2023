@@ -12,6 +12,6 @@ await day.DownloadInputAsync();
 day.Part1();
 day.Part2();
 #else
-//if (await day.CheckPart1Async() == true && await day.CheckPart2Async() == true)
-    //day.Benchmark();
+if (await day.CheckPart1Async() == true && await day.CheckPart2Async() == true)
+    day.Benchmark();
 #endif

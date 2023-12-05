@@ -55,8 +55,11 @@ public class Day05 : AdventBase
     protected override object InternalPart2()
     {
         var min = long.MaxValue;
-        for (var index = 0; index < this.seeds.Length; index += 2)
+        Parallel.For(0, this.seeds.Length / 2, i =>
         {
+            var index = i * 2;
+
+            var localMin = long.MaxValue;
             for (var seed = this.seeds[index]; seed < this.seeds[index] + this.seeds[index + 1]; seed++)
             {
                 long value = seed;
@@ -65,12 +68,20 @@ public class Day05 : AdventBase
                     value = category.GetNextStep(value);
                 }
 
-                if (value < min)
+                if (value < localMin)
                 {
-                    min = value;
+                    localMin = value;
                 }
             }
-        }
+
+            lock (this)
+            {
+                if (localMin < min)
+                {
+                    min = localMin;
+                }
+            }
+        });
 
         return min;
     }
