@@ -21,6 +21,8 @@ public class Day03 : AdventBase
     private char[] inputP1; 
     private char[] inputP2; 
     private static readonly SearchValues<char> Symbols = SearchValues.Create("0123456789.");
+
+    private OutputBox outputBox = new();
     
     protected override void InternalOnLoad()
     {
@@ -35,12 +37,18 @@ public class Day03 : AdventBase
         var mutableMap = new Span2D<char>(this.inputP1, 0, this.inputP1.Length / (stride + 1), stride, 1);
         for (var y = 0; y < mutableMap.Height; y++)
         {
-            for (var x = 0; x < mutableMap.Width; x++)
+            Span<char> line = mutableMap.GetRowSpan(y);
+            
+            var x = 0;
+            for (; x < mutableMap.Width; x++)
             {
-                if (char.IsDigit(mutableMap[y,x]) || mutableMap[y,x] == '.')
+                int advance = line[x..].IndexOfAnyExcept(Symbols);
+                if (advance == -1)
                 {
-                    continue;
+                    break;
                 }
+
+                x += advance;
 
                 foreach (Vector2 direction in adjacent)
                 {
@@ -60,7 +68,8 @@ public class Day03 : AdventBase
             }
         }
 
-        return sum;
+        outputBox.Output = sum;
+        return outputBox;
     }
 
     protected override object InternalPart2()
@@ -115,7 +124,8 @@ public class Day03 : AdventBase
             }
         }
 
-        return sum;
+        outputBox.Output = sum;
+        return outputBox;
     }
 
     private void SweepAndReplace(Span2D<char> mutableMap, int x, int y, out ulong output)
@@ -141,4 +151,14 @@ public class Day03 : AdventBase
     }
     
     private record struct Vector2(int X, int Y);
+
+    public class OutputBox
+    {
+        public ulong Output;
+
+        public override string ToString()
+        {
+            return Output.ToString();
+        }
+    }
 }
